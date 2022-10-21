@@ -9,7 +9,7 @@ class CustomPDF:
 
         Input data will be transformed into histogram data given the
         corresponding bins. The histogram will be interpolated according to
-        the selected method. Using 'CustomProbDensFct.gen_value()',
+        the selected method. Using 'custom_pdf.draw()' or 'custom_pdf()',
         a new value given the underlying probability distribution that has
         been inferred from the histogram data will be returned.
 
@@ -44,13 +44,14 @@ class CustomPDF:
     """
     def __init__(self, d, bins='auto', method='linear'):
         self.method = method + ''
-        self.counts, self.bins = np.histogram(d, bins=bins,
-                                              density=True)
+        self.counts, self.bins = np.histogram(d, bins=bins, density=True)
+
         cum_counts = np.cumsum(self.counts)
         bin_widths = (self.bins[1:] - self.bins[:-1])
+
         self.x = cum_counts * bin_widths
         self.y = self.bins[1:]
-        self.distribution = interp1d(self.x, self.y, kind=method)
+        self.distribution = interp1d(self.x, self.y, kind=self.method)
 
     def __call__(self, n_values):
         """Return random sampled value

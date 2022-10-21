@@ -49,6 +49,49 @@ def cummean(a, axis=None):
     return np.cumsum(b, axis=axis)/np.cumsum(np.ones(b.shape), axis=axis)
 
 
+def median_smooth(d, kernel_size=5, use_less_memory=False):
+    """Median smooth for 1D data
+
+    :param array_like d:
+        The data.
+    :param int kernel_size:
+        Size of the smoothing kernel. Must be odd or will be raised by 1.
+    :param bool use_less_memory:
+        Whether to use less system memory (roughly 10x slower).
+    :return:
+        Smoothed data.
+    """
+    # make kernel size odd
+    if (kernel_size % 2) == 0:
+        kernel_size += 1
+
+    # determine padding
+    padding = (kernel_size - 1)//2
+
+    if not isinstance(d, list):
+        d = d.tolist()
+
+    # add NaN padding to use with nanmedian (Padding will not be included in
+    # median calculation)
+    d = [np.nan] * padding + d + [np.nan] * padding
+
+    # accumulate data in matrix. Smoothing in one go. Basically the matrix is
+    # replicated with a shift of 1 and a window size of kernel_size. After
+    # computing the median across the kernel sized dimension, the matrix
+    # collapses into the result
+    if use_less_memory:  # normal loop and smooth
+        tmp = []
+        for ind in range(padding, len(d) - padding):
+            tmp.append(np.nanmedian(d[(ind - padding):(ind + padding + 1)]))
+        return np.array(tmp)
+    else:  # build up matrix and compute median in one go
+        tmp = [d[ind:-(kernel_size - ind - 1)]
+               for ind in range(kernel_size - 1)]
+
+        tmp.append(d[(kernel_size - 1):])
+        return np.nanmedian(np.array(tmp), axis=0)
+
+
 def pol2cart(r, th):
     """Converts polar to cartesian coordinates.
 
