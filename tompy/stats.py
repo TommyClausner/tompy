@@ -58,7 +58,7 @@ class CustomProbDensFct:
     def _get_seed(self):
         return np.random.uniform(self.x[0], self.x[-1])
 
-    def gen_value(self, n_values=1):
+    def draw(self, n_values=1):
         """Return random sampled value
 
         :param int n_values:
