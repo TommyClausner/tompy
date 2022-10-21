@@ -52,6 +52,14 @@ class CustomPDF:
         self.y = self.bins[1:]
         self.distribution = interp1d(self.x, self.y, kind=method)
 
+    def __call__(self, n_values):
+        """Return random sampled value
+
+        :param int n_values:
+            How many values to draw.
+        """
+        return self.draw(n_values=n_values)
+
     def _get_seed(self):
         return np.random.uniform(self.x[0], self.x[-1])
 
