@@ -17,3 +17,5 @@ A function that returns indices that would sort array a like array b:
 """
 
 from .core import *
+from .stats import *
+from .plotting import *
