@@ -46,7 +46,6 @@ from ``requirements.txt`` will be
 checked and installed as well if necessary.
 """
 
-import json
 import os
 
 import setuptools
