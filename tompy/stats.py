@@ -27,8 +27,6 @@ class CustomProbDensFct:
 
     Attributes
     ----------
-    data : array_like
-        The data on which the estimation is estimate.
     bins : array_like
         Histogram bins.
     counts : array_like
@@ -45,9 +43,8 @@ class CustomProbDensFct:
         ‘next’.
     """
     def __init__(self, d, bins='auto', method='linear'):
-        self.data = d + 0
         self.method = method + ''
-        self.counts, self.bins = np.histogram(self.data, bins=bins,
+        self.counts, self.bins = np.histogram(d, bins=bins,
                                               density=True)
         cum_counts = np.cumsum(self.counts)
         bin_widths = (self.bins[1:] - self.bins[:-1])
