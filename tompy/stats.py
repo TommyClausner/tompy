@@ -4,7 +4,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 
-class CustomProbDensFct:
+class CustomPDF:
     """Draw random values from interpolated histogram data
 
         Input data will be transformed into histogram data given the
