@@ -58,9 +58,13 @@ class CustomProbDensFct:
     def _get_seed(self):
         return np.random.uniform(self.x[0], self.x[-1])
 
-    def gen_value(self):
-        """Return random sampled value"""
-        return self.distribution(self._get_seed())
+    def gen_value(self, n_values=1):
+        """Return random sampled value
+
+        :param int n_values:
+            How many values to draw.
+        """
+        return self.distribution([self._get_seed() for _ in range(n_values)])
 
     def get_distribution(self):
         """Return interpolated distribution"""
