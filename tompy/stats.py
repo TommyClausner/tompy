@@ -4,91 +4,6 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 
-class CustomPDF:
-    """Draw random values from interpolated histogram data
-
-        Input data will be transformed into histogram data given the
-        corresponding bins. The histogram will be interpolated according to
-        the selected method. Using 'custom_pdf.draw()' or 'custom_pdf()',
-        a new value given the underlying probability distribution that has
-        been inferred from the histogram data will be returned.
-
-    Parameters
-    ----------
-    d : array_like
-        The data on which the estimation is estimate.
-    bins : int | str
-        Either ‘auto’ or a integer indicating the number of bins for the
-        histogram that is used for probability density estimation.
-    method : str
-        Which interpolation method to use. Must be of ‘linear’, ‘nearest’,
-        ‘nearest-up’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’,
-        ‘next’.
-
-    Attributes
-    ----------
-    bins : array_like
-        Histogram bins.
-    counts : array_like
-        Histogram counts.
-    distribution : array_like
-        Distribution from which is drawn.
-    x : array_like
-        x values of the discrete distribution
-    y : array_like
-        y values of the discrete distribution
-    method : str
-        Which interpolation method to use. Must be of ‘linear’, ‘nearest’,
-        ‘nearest-up’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’,
-        ‘next’.
-    """
-    def __init__(self, d, bins='auto', method='linear'):
-        self.method = method + ''
-        self.counts, self.bins = np.histogram(d, bins=bins, density=True)
-
-        cum_counts = np.cumsum(self.counts)
-        bin_widths = (self.bins[1:] - self.bins[:-1])
-
-        self.x = cum_counts * bin_widths
-        self.y = self.bins[1:]
-        self.distribution = interp1d(self.x, self.y, kind=self.method)
-
-    def __call__(self, n_values):
-        """Return random sampled value
-
-        :param int n_values:
-            How many values to draw.
-        """
-        return self.draw(n_values=n_values)
-
-    def _get_seed(self):
-        return np.random.uniform(self.x[0], self.x[-1])
-
-    def draw(self, n_values=1):
-        """Return random sampled value
-
-        :param int n_values:
-            How many values to draw.
-        """
-        return self.distribution([self._get_seed() for _ in range(n_values)])
-
-    def get_distribution(self):
-        """Return interpolated distribution"""
-        return self.distribution
-
-    def get_counts(self):
-        """Return histogram counts"""
-        return self.counts
-
-    def get_bins(self):
-        """Return histogram bins"""
-        return self.bins
-
-    def get_xy(self):
-        """Return x and y value as tuple"""
-        return self.x, self.y
-
-
 def arostest(data, normalize_ranks=True, method='lstsq', shape=None,
              permutations=10000, alpha=0.05, tail=None, shape_dim=1,
              unique_permutations=None):
@@ -461,3 +376,89 @@ def arostest(data, normalize_ranks=True, method='lstsq', shape=None,
         'method': method}
 
     return stats
+
+
+class CustomPDF:
+    """Draw random values from interpolated histogram data
+
+        Input data will be transformed into histogram data given the
+        corresponding bins. The histogram will be interpolated according to
+        the selected method. Using 'custom_pdf.draw()' or 'custom_pdf()',
+        a new value given the underlying probability distribution that has
+        been inferred from the histogram data will be returned.
+
+    Parameters
+    ----------
+    d : array_like
+        The data on which the estimation is estimate.
+    bins : int | str
+        Either ‘auto’ or a integer indicating the number of bins for the
+        histogram that is used for probability density estimation.
+    method : str
+        Which interpolation method to use. Must be of ‘linear’, ‘nearest’,
+        ‘nearest-up’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’,
+        ‘next’.
+
+    Attributes
+    ----------
+    bins : array_like
+        Histogram bins.
+    counts : array_like
+        Histogram counts.
+    distribution : array_like
+        Distribution from which is drawn.
+    x : array_like
+        x values of the discrete distribution
+    y : array_like
+        y values of the discrete distribution
+    method : str
+        Which interpolation method to use. Must be of ‘linear’, ‘nearest’,
+        ‘nearest-up’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’,
+        ‘next’.
+    """
+    def __init__(self, d, bins='auto', method='linear'):
+        self.method = method + ''
+        self.counts, self.bins = np.histogram(d, bins=bins, density=True)
+
+        cum_counts = np.cumsum(self.counts)
+        bin_widths = (self.bins[1:] - self.bins[:-1])
+
+        self.x = cum_counts * bin_widths
+        self.y = self.bins[1:]
+        self.distribution = interp1d(self.x, self.y, kind=self.method)
+
+    def __call__(self, n_values):
+        """Return random sampled value
+
+        :param int n_values:
+            How many values to draw.
+        """
+        return self.draw(n_values=n_values)
+
+    def _get_seed(self):
+        return np.random.uniform(self.x[0], self.x[-1])
+
+    def draw(self, n_values=1):
+        """Return random sampled value
+
+        :param int n_values:
+            How many values to draw.
+        """
+        return self.distribution([self._get_seed() for _ in range(n_values)])
+
+    def get_distribution(self):
+        """Return interpolated distribution"""
+        return self.distribution
+
+    def get_counts(self):
+        """Return histogram counts"""
+        return self.counts
+
+    def get_bins(self):
+        """Return histogram bins"""
+        return self.bins
+
+    def get_xy(self):
+        """Return x and y value as tuple"""
+        return self.x, self.y
+
