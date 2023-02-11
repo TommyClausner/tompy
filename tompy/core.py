@@ -105,6 +105,48 @@ def pol2cart(r, th):
     return r * np.cos(th), r * np.sin(th)
 
 
+def submesh(vertices, faces, inds, conn=0):
+    """Recomputes mesh faces (and vertices) based on a vertex sub-selection.
+
+    :param array-like vertices:
+        Vertex coordinates.
+    :param array-like faces:
+        Vertex indices that form faces.
+    :param array-like inds:
+        Indices of vertices that form the sub-selected mesh.
+    :param int conn:
+        Connectivity. Minimum number of points that need to be connected to
+        the selected vertex in order to consider the respective adjacent face
+        for the sub-selection.
+    :return:
+        Selected vertices and corresponding faces.
+    """
+
+    # determine faces that are connected with more than "conn" vertex points
+    # to the sub-selected mesh.
+    sel_inds_faces = np.isin(faces, inds).sum(axis=1) > conn
+
+    # raw selection
+    faces_sel = faces[sel_inds_faces, :]
+    verts_sel = np.unique(faces_sel.flatten())
+
+    # map old vertex indices to new list of vertices (and corresponding
+    # indices)
+    verts_map = {old: new for new, old in enumerate(verts_sel)}
+
+    # apply selection to vertex list
+    new_verts = vertices[verts_sel, :]
+
+    # compute new faces (with updated indices)
+    new_faces = [list(map(verts_map.get, f)) for f in faces_sel]
+
+    # convert to array if input was not list
+    if not isinstance(faces, list):
+        new_faces = np.asarray(new_faces)
+
+    return new_verts, new_faces
+
+
 def rankdata(a, axis=-1, direction='ascend'):
     """Ranks data and assigns ascending or descending values to each data point.
 

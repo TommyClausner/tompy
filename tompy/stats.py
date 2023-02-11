@@ -461,4 +461,3 @@ class CustomPDF:
     def get_xy(self):
         """Return x and y value as tuple"""
         return self.x, self.y
-
