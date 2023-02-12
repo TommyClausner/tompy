@@ -140,11 +140,7 @@ def submesh(vertices, faces, inds, conn=0):
     # compute new faces (with updated indices)
     new_faces = [list(map(verts_map.get, f)) for f in faces_sel]
 
-    # convert to array if input was not list
-    if not isinstance(faces, list):
-        new_faces = np.asarray(new_faces)
-
-    return new_verts, new_faces
+    return new_verts, np.asarray(new_faces)
 
 
 def rankdata(a, axis=-1, direction='ascend'):
