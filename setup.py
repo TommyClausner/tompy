@@ -5,7 +5,7 @@ Download
 ########
 
 Download the repository from
-`GitLab <https://github.com/tommyclausner/tompy>`_ or via
+`GitHub <https://github.com/tommyclausner/tompy>`_ or via
 
 ``git clone https://github.com/tommyclausner/tompy``
 
