@@ -46,7 +46,22 @@ def cummean(a, axis=None):
         Cumulative average along axis.
     """
     b = np.asarray(a)
-    return np.cumsum(b, axis=axis)/np.cumsum(np.ones(b.shape), axis=axis)
+    return np.cumsum(b, axis=axis) / np.cumsum(np.ones(b.shape), axis=axis)
+
+
+def ind2sub(array_shape, inds):
+    """Turns continuous index into row and column index.
+
+    Mimics MatLab's built in function API.
+
+    :param array-like array_shape:
+        Shape of array.
+    :param array-like inds:
+        Continuous indices.
+    :return:
+        (Rows, columns) indices of the same length as inds
+    """
+    return np.asarray(inds) // array_shape[1], np.asarray(inds) % array_shape[0]
 
 
 def median_smooth(d, kernel_size=5, use_less_memory=False):
@@ -66,7 +81,7 @@ def median_smooth(d, kernel_size=5, use_less_memory=False):
         kernel_size += 1
 
     # determine padding
-    padding = (kernel_size - 1)//2
+    padding = (kernel_size - 1) // 2
 
     if not isinstance(d, list):
         d = d.tolist()
@@ -105,6 +120,47 @@ def pol2cart(r, th):
     return r * np.cos(th), r * np.sin(th)
 
 
+def rankdata(a, axis=-1, direction='ascend'):
+    """Ranks data and assigns ascending or descending values to each data point.
+
+    Uses `argsort
+    <https://numpy.org/doc/stable/reference/generated/numpy.argsort.html>`_
+    provided by numpy.
+
+    :param array_like a:
+        The data to be ranked.
+    :param int | None axis:
+        Axis along which to operate.
+    :param str direction:
+        Direction of sorting (Default is 'ascend'). Can be 'ascend' or
+        'descend'.
+    :return:
+        ndarray
+    """
+    b = np.argsort(a, axis=axis).argsort(axis=axis)
+    if direction == 'ascend':
+        return b
+    else:
+        return np.abs(b - b.max())
+
+
+def sub2ind(array_shape, rows, cols):
+    """Turns row and column index into continuous index.
+
+    Mimics MatLab's built in function API.
+
+    :param array-like array_shape:
+        Shape of array.
+    :param array-like rows:
+        Row indices.
+    :param array-like cols:
+        Column indices.
+    :return:
+        Continuous indices of the same length as rows or cols
+    """
+    return np.asarray(rows) * array_shape[1] + np.asarray(cols)
+
+
 def submesh(vertices, faces, inds, conn=0):
     """Recomputes mesh faces (and vertices) based on a vertex sub-selection.
 
@@ -141,27 +197,3 @@ def submesh(vertices, faces, inds, conn=0):
     new_faces = [list(map(verts_map.get, f)) for f in faces_sel]
 
     return new_verts, np.asarray(new_faces)
-
-
-def rankdata(a, axis=-1, direction='ascend'):
-    """Ranks data and assigns ascending or descending values to each data point.
-
-    Uses `argsort
-    <https://numpy.org/doc/stable/reference/generated/numpy.argsort.html>`_
-    provided by numpy.
-
-    :param array_like a:
-        The data to be ranked.
-    :param int | None axis:
-        Axis along which to operate.
-    :param str direction:
-        Direction of sorting (Default is 'ascend'). Can be 'ascend' or
-        'descend'.
-    :return:
-        ndarray
-    """
-    b = np.argsort(a, axis=axis).argsort(axis=axis)
-    if direction == 'ascend':
-        return b
-    else:
-        return np.abs(b - b.max())
