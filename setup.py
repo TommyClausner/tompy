@@ -12,7 +12,7 @@ Download the repository from
 Pre-requisites
 ##############
 
-Make sure pip is up to date.
+Make sure pip is up-to-date.
 
 ``pip install --upgrade pip``
 
